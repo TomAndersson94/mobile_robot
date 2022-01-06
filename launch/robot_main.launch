@@ -1,0 +1,9 @@
+<launch>
+
+    <node pkg = "mobile_robot"
+        type = "robot_main.py"
+        name = "robot_main_node"
+        output = "screen">
+    </node>
+    
+</launch>
