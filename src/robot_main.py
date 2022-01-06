@@ -68,7 +68,7 @@ def set_wheel_velocity(cmd_vel):
         print("left pwm: " , 0)
 
 print("starting")
-GPIO.setmode(GPIO.BOARD)
+GPIO.setmode(GPIO.BCM)
 GPIO.setup(LEFT_PWM_PIN_FORWARD,GPIO.OUT)
 GPIO.setup(RIGHT_PWM_PIN_FORWARD,GPIO.OUT)
 
@@ -80,10 +80,5 @@ right_pwm_forward.start(0)
 rospy.init_node("robot_node")
 rospy.Subscriber('/cmd_vel', Twist, set_wheel_velocity)
 print("sub done")
-while True:
-    right_pwm_forward.ChangeDutyCycle(1)
-    left_pwm_forward.ChangeDutyCycle(1)
-    print("looping")
-    time.sleep(0.1)
 
 rospy.spin()
