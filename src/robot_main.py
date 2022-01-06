@@ -61,7 +61,7 @@ def set_wheel_velocity(cmd_vel):
     elif right_vel_setpoint <= 0:
         right_pwm_forward.ChangeDutyCycle(0)
 
-GPIO.setmode(GPIO.BOARD)
+GPIO.setmode(GPIO.BCM)
 GPIO.setup(LEFT_PWM_PIN_FORWARD,GPIO.OUT)
 GPIO.setup(RIGHT_PWM_PIN_FORWARD,GPIO.OUT)
 
