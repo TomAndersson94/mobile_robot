@@ -54,17 +54,17 @@ def set_wheel_velocity(cmd_vel):
 
     if left_vel_setpoint > 0:
         left_pwm_forward.ChangeDutyCycle(left_vel_setpoint)
-        print("left pwm: " + left_vel_setpoint)
+        print("left pwm: " , left_vel_setpoint)
     elif left_vel_setpoint <= 0:
         left_pwm_forward.ChangeDutyCycle(0)
-        print("left pwm: " + 0)
+        print("left pwm: " , 0)
 
     if right_vel_setpoint > 0:
         right_pwm_forward.ChangeDutyCycle(right_vel_setpoint)
-        print("right pwm: " + right_vel_setpoint)
+        print("right pwm: " , right_vel_setpoint)
     elif right_vel_setpoint <= 0:
         right_pwm_forward.ChangeDutyCycle(0)
-        print("left pwm: " + 0)
+        print("left pwm: " , 0)
 
 print("starting")
 GPIO.setmode(GPIO.BCM)
