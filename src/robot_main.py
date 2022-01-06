@@ -74,8 +74,8 @@ GPIO.setup(RIGHT_PWM_PIN_FORWARD,GPIO.OUT)
 
 left_pwm_forward = GPIO.PWM(LEFT_PWM_PIN_FORWARD, PWM_FREQUENCY)
 right_pwm_forward = GPIO.PWM(RIGHT_PWM_PIN_FORWARD, PWM_FREQUENCY)
-left_pwm_forward.start(0)
-right_pwm_forward.start(0)
+left_pwm_forward.start(1)
+right_pwm_forward.start(1)
 
 rospy.init_node("robot_node")
 rospy.Subscriber('/cmd_vel', Twist, set_wheel_velocity)
