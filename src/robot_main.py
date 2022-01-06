@@ -17,6 +17,7 @@ def scale(val, scale_from, scale_to):
 
 
 def set_wheel_velocity(cmd_vel):
+    print("received topic")
     joystick_x = cmd_vel.linear.x
     joystick_y = -cmd_vel.angular.z
     speed = MAX_SPEED*math.sqrt(joystick_x**2+joystick_y**2)
@@ -65,6 +66,7 @@ def set_wheel_velocity(cmd_vel):
         right_pwm_forward.ChangeDutyCycle(0)
         print("left pwm: " + 0)
 
+print("starting")
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(LEFT_PWM_PIN_FORWARD,GPIO.OUT)
 GPIO.setup(RIGHT_PWM_PIN_FORWARD,GPIO.OUT)
@@ -76,5 +78,5 @@ right_pwm_forward.start(0)
 
 rospy.init_node("robot_node")
 rospy.Subscriber('/cmd_vel', Twist, set_wheel_velocity)
-
+print("sub done")
 rospy.spin()
