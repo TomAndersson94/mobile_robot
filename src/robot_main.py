@@ -5,9 +5,9 @@ from geometry_msgs.msg import Twist
 import RPi.GPIO as GPIO
 
 MAX_SPEED = 1
-LEFT_PWM_PIN_FORWARD = 13
-RIGHT_PWM_PIN_FORWARD = 12
-PWM_FREQUENCY = 1000
+LEFT_PWM_PIN_FORWARD = 33
+RIGHT_PWM_PIN_FORWARD = 32
+PWM_FREQUENCY = 100
 
 def scale(val, scale_from, scale_to):
     """
@@ -68,7 +68,7 @@ def set_wheel_velocity(cmd_vel):
         print("left pwm: " , 0)
 
 print("starting")
-GPIO.setmode(GPIO.BCM)
+GPIO.setmode(GPIO.BOARD)
 GPIO.setup(LEFT_PWM_PIN_FORWARD,GPIO.OUT)
 GPIO.setup(RIGHT_PWM_PIN_FORWARD,GPIO.OUT)
 
