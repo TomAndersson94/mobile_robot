@@ -1,5 +1,6 @@
 import rospy
 import math
+import time
 from geometry_msgs.msg import Twist
 import RPi.GPIO as GPIO
 
@@ -79,4 +80,10 @@ right_pwm_forward.start(0)
 rospy.init_node("robot_node")
 rospy.Subscriber('/cmd_vel', Twist, set_wheel_velocity)
 print("sub done")
+while True:
+    right_pwm_forward.ChangeDutyCycle(1)
+    left_pwm_forward.ChangeDutyCycle(1)
+    print("looping")
+    time.sleep(0.1)
+
 rospy.spin()
