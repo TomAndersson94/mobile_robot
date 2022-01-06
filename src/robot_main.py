@@ -67,7 +67,7 @@ def set_wheel_velocity(cmd_vel):
         print("left pwm: " , 0)
 
 print("starting")
-GPIO.setmode(GPIO.BCM)
+GPIO.setmode(GPIO.BOARD)
 GPIO.setup(LEFT_PWM_PIN_FORWARD,GPIO.OUT)
 GPIO.setup(RIGHT_PWM_PIN_FORWARD,GPIO.OUT)
 
