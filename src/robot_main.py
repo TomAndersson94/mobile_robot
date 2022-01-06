@@ -4,8 +4,8 @@ from geometry_msgs.msg import Twist
 import RPi.GPIO as GPIO
 
 MAX_SPEED = 1
-LEFT_PWM_PIN_FORWARD = 33
-RIGHT_PWM_PIN_FORWARD = 12
+LEFT_PWM_PIN_FORWARD = 18
+RIGHT_PWM_PIN_FORWARD = 13
 PWM_FREQUENCY = 1000
 
 def scale(val, scale_from, scale_to):
