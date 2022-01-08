@@ -19,7 +19,7 @@ class Robot:
     right_running_backward = False   
     right_running_forward = False
 
-    def __init(self):
+    def __init__(self):
         print("init start")
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
