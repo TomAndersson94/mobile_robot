@@ -18,6 +18,8 @@ class Robot:
     left_running_forward = False
     right_running_backward = False   
     right_running_forward = False
+    left_pwm_forward = None
+    right_pwm_forward = None
 
     def __init__(self):
         print("init start")
@@ -28,13 +30,13 @@ class Robot:
         GPIO.setup(RIGHT_PWM_PIN_FORWARD,GPIO.OUT)
         GPIO.setup(RIGHT_PWM_PIN_BACKWARD,GPIO.OUT)
 
-        left_pwm_forward = GPIO.PWM(LEFT_PWM_PIN_FORWARD, PWM_FREQUENCY)
+        self.left_pwm_forward = GPIO.PWM(LEFT_PWM_PIN_FORWARD, PWM_FREQUENCY)
         left_pwm_backward = GPIO.PWM(LEFT_PWM_PIN_BACKWARD, PWM_FREQUENCY)
-        right_pwm_forward = GPIO.PWM(RIGHT_PWM_PIN_FORWARD, PWM_FREQUENCY)
+        self.right_pwm_forward = GPIO.PWM(RIGHT_PWM_PIN_FORWARD, PWM_FREQUENCY)
         right_pwm_backward = GPIO.PWM(RIGHT_PWM_PIN_BACKWARD, PWM_FREQUENCY)
 
-        left_pwm_forward.start(0)
-        right_pwm_forward.start(0)
+        self.left_pwm_forward.start(0)
+        self.right_pwm_forward.start(0)
 
         rospy.init_node("robot_node")
         rospy.Subscriber('/cmd_vel', Twist, self.set_wheel_velocity)
