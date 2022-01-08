@@ -6,8 +6,11 @@ import RPi.GPIO as GPIO
 
 MAX_SPEED = 1
 LEFT_PWM_PIN_FORWARD = 13
+LEFT_PWM_PIN_BACKWARD = 19
 RIGHT_PWM_PIN_FORWARD = 18
+RIGHT_PWM_PIN_BACKWARD = 12
 PWM_FREQUENCY = 100
+
 
 def scale(val, scale_from, scale_to):
     """
@@ -52,31 +55,54 @@ def set_wheel_velocity(cmd_vel):
         left_vel_setpoint = speed*scale(angle, [0, -math.pi/2], [1,-1])
         right_vel_setpoint = speed*-1
     
-
     if left_vel_setpoint > 0:
-        left_pwm_forward.ChangeDutyCycle(left_vel_setpoint*100)
-        print("left pwm: " , left_vel_setpoint)
-    elif left_vel_setpoint <= 0:
-        left_pwm_forward.ChangeDutyCycle(0)
-        print("left pwm: " , 0)
+        if left_running_backward:
+            left_pwm_backward.stop()
+            left_pwm_forward.start(left_vel_setpoint*100)
+            left_running_backward = False
+        else:
+            left_pwm_forward.ChangeDutyCycle(left_vel_setpoint*100)
+        
+    elif left_vel_setpoint < 0:
+        if left_running_backward:
+            left_pwm_backward.ChangeDutyCycle(abs(left_vel_setpoint)*100)
+        else:
+            left_pwm_forward.stop()
+            left_pwm_backward.start(abs(left_vel_setpoint)*100)
+            left_running_backward = True
+    elif left_vel_setpoint == 0:
+        if left_running_backward:
+            left_pwm_backward.stop()
+        else:
+            left_pwm_forward.stop()
+
 
     if right_vel_setpoint > 0:
         right_pwm_forward.ChangeDutyCycle(right_vel_setpoint*100)
-        print("right pwm: " , right_vel_setpoint)
+
     elif right_vel_setpoint <= 0:
-        right_pwm_forward.ChangeDutyCycle(0)
-        print("left pwm: " , 0)
+        right_pwm_backward.ChangeDutyCycle(right_vel_setpoint*100)
 
 print("starting")
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 GPIO.setup(LEFT_PWM_PIN_FORWARD,GPIO.OUT)
+GPIO.setup(LEFT_PWM_PIN_BACKWARD,GPIO.OUT)
 GPIO.setup(RIGHT_PWM_PIN_FORWARD,GPIO.OUT)
+GPIO.setup(RIGHT_PWM_PIN_BACKWARD,GPIO.OUT)
 
 left_pwm_forward = GPIO.PWM(LEFT_PWM_PIN_FORWARD, PWM_FREQUENCY)
+left_pwm_backward = GPIO.PWM(LEFT_PWM_PIN_BACKWARD, PWM_FREQUENCY)
 right_pwm_forward = GPIO.PWM(RIGHT_PWM_PIN_FORWARD, PWM_FREQUENCY)
+right_pwm_backward = GPIO.PWM(RIGHT_PWM_PIN_BACKWARD, PWM_FREQUENCY)
+
 left_pwm_forward.start(0)
+left_pwm_backward.start(0)
 right_pwm_forward.start(0)
+right_pwm_backward.start(0)
+
+left_running_backward = False
+right_running_backward = False
 
 rospy.init_node("robot_node")
 rospy.Subscriber('/cmd_vel', Twist, set_wheel_velocity)
