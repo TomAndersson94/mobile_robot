@@ -47,7 +47,7 @@ class Robot:
         print("got cmd_vel")
         joystick_x = cmd_vel.linear.x
         joystick_y = -cmd_vel.angular.z
-        speed = MAX_SPEED*math.sqrt(joystick_x**2+joystick_y**2)
+        speed = MAX_SPEED*math.sqrt(joystick_x**2+joystick_y**2)/math.sqrt(2)
     
         angle = 0
         if joystick_y == 0 and joystick_x >= 0:
