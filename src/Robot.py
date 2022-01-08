@@ -20,7 +20,7 @@ class Robot:
     right_running_forward = False
 
     def __init(self):
-
+        print("init start")
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
         GPIO.setup(LEFT_PWM_PIN_FORWARD,GPIO.OUT)
@@ -42,6 +42,7 @@ class Robot:
 
 
     def set_wheel_velocity(self, cmd_vel):
+        print("got cmd_vel")
         joystick_x = cmd_vel.linear.x
         joystick_y = -cmd_vel.angular.z
         speed = MAX_SPEED*math.sqrt(joystick_x**2+joystick_y**2)
