@@ -1,7 +1,7 @@
 from Robot import Robot
 
 robot = Robot()
-
+print("robot created")
 terminate = False
 
 while not terminate:
