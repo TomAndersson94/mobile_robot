@@ -19,7 +19,9 @@ class Robot:
     right_running_backward = False   
     right_running_forward = False
     left_pwm_forward = None
+    left_pwm_backward = None
     right_pwm_forward = None
+    right_pwm_backward = None
 
     def __init__(self):
         GPIO.setmode(GPIO.BCM)
@@ -30,12 +32,12 @@ class Robot:
         GPIO.setup(RIGHT_PWM_PIN_BACKWARD,GPIO.OUT)
 
         self.left_pwm_forward = GPIO.PWM(LEFT_PWM_PIN_FORWARD, PWM_FREQUENCY)
-        left_pwm_backward = GPIO.PWM(LEFT_PWM_PIN_BACKWARD, PWM_FREQUENCY)
+        self.left_pwm_backward = GPIO.PWM(LEFT_PWM_PIN_BACKWARD, PWM_FREQUENCY)
         self.right_pwm_forward = GPIO.PWM(RIGHT_PWM_PIN_FORWARD, PWM_FREQUENCY)
-        right_pwm_backward = GPIO.PWM(RIGHT_PWM_PIN_BACKWARD, PWM_FREQUENCY)
+        self.right_pwm_backward = GPIO.PWM(RIGHT_PWM_PIN_BACKWARD, PWM_FREQUENCY)
 
-        self.left_pwm_forward.start(0)
-        self.right_pwm_forward.start(0)
+        #self.left_pwm_forward.start(0)
+        #self.right_pwm_forward.start(0)
 
         rospy.init_node("robot_node")
         rospy.Subscriber('/cmd_vel', Twist, self.set_wheel_velocity)
@@ -76,36 +78,47 @@ class Robot:
             left_vel_setpoint = speed*self.scale(angle, [0, -math.pi/2], [1,-1])
             right_vel_setpoint = speed*-1
         
-        if left_vel_setpoint > 0:
-            self.left_pwm_forward.ChangeDutyCycle(left_vel_setpoint*100)
-        else:
-            self.left_pwm_forward.ChangeDutyCycle(0)
-        
-        if right_vel_setpoint > 0:
-            self.right_pwm_forward.ChangeDutyCycle(right_vel_setpoint*100)
-        else:
-            self.right_pwm_forward.ChangeDutyCycle(0)
-
         #if left_vel_setpoint > 0:
-        #    if self.left_running_backward:
-        #        self.left_pwm_backward.stop()
-        #        self.left_pwm_forward.start(left_vel_setpoint*100)
-        #        self.left_running_backward = False
-        #    else:
-        #        self.left_pwm_forward.ChangeDutyCycle(left_vel_setpoint*100)
-        #    
-        #elif left_vel_setpoint < 0:
-        #    if self.left_running_backward:
-        #        self.left_pwm_backward.ChangeDutyCycle(abs(left_vel_setpoint)*100)
-        #    else:
-        #        self.left_pwm_forward.stop()
-        #        self.left_pwm_backward.start(abs(left_vel_setpoint)*100)
-        #        self.left_running_backward = True
-        #elif left_vel_setpoint == 0:
-        #    if self.left_running_backward:
-        #        self.left_pwm_backward.stop()
-        #    else:
-        #        self.left_pwm_forward.stop()
+        #    self.left_pwm_forward.ChangeDutyCycle(left_vel_setpoint*100)
+        #else:
+        #    self.left_pwm_forward.ChangeDutyCycle(0)
+        #
+        #if right_vel_setpoint > 0:
+        #    self.right_pwm_forward.ChangeDutyCycle(right_vel_setpoint*100)
+        #else:
+        #    self.right_pwm_forward.ChangeDutyCycle(0)
+
+        if left_vel_setpoint > 0:
+            if self.left_running_backward:
+                self.left_pwm_backward.stop()
+                self.left_pwm_forward.start(left_vel_setpoint*100)
+                self.left_running_backward = False
+                self.left_running_forward = True
+            elif self.left_running_forward:
+                self.left_pwm_forward.ChangeDutyCycle(left_vel_setpoint*100)
+            else:
+                self.left_pwm_forward.start(left_vel_setpoint*100)
+                self.left_running_forward = True
+
+        elif left_vel_setpoint < 0:
+            if self.left_running_backward:
+                self.left_pwm_backward.ChangeDutyCycle(abs(left_vel_setpoint)*100)
+            elif self.left_running_forward:
+                self.left_pwm_forward.stop()
+                self.left_pwm_backward.start(abs(left_vel_setpoint)*100)
+                self.left_running_forward = False
+                self.left_running_backward = True
+            else:
+                self.left_pwm_backward.start(abs(left_vel_setpoint)*100)
+                self.left_running_backward = True
+
+        elif left_vel_setpoint == 0:
+            if self.left_running_backward:
+                self.left_pwm_backward.stop()
+                self.left_running_backward = False
+            elif self.left_running_forward:
+                self.left_pwm_forward.stop()
+                self.left_running_forward = False
     
     
         #if right_vel_setpoint > 0:
