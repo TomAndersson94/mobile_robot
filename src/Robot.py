@@ -117,7 +117,7 @@ class Robot:
         #    self.right_pwm_backward.ChangeDutyCycle(right_vel_setpoint*100)
     
 
-    def scale(val, scale_from, scale_to):
+    def scale(self, val, scale_from, scale_to):
         """
         Scale the given value from the scale of scale_from to the scale of scale_to.
         """
