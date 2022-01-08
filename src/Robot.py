@@ -77,16 +77,6 @@ class Robot:
         elif joystick_x< 0 and joystick_y >= 0:
             left_vel_setpoint = speed*self.scale(angle, [0, -math.pi/2], [1,-1])
             right_vel_setpoint = speed*-1
-        
-        #if left_vel_setpoint > 0:
-        #    self.left_pwm_forward.ChangeDutyCycle(left_vel_setpoint*100)
-        #else:
-        #    self.left_pwm_forward.ChangeDutyCycle(0)
-        #
-        #if right_vel_setpoint > 0:
-        #    self.right_pwm_forward.ChangeDutyCycle(right_vel_setpoint*100)
-        #else:
-        #    self.right_pwm_forward.ChangeDutyCycle(0)
 
         if left_vel_setpoint > 0:
             if self.left_running_backward:
@@ -99,7 +89,6 @@ class Robot:
             else:
                 self.left_pwm_forward.start(left_vel_setpoint*100)
                 self.left_running_forward = True
-
         elif left_vel_setpoint < 0:
             if self.left_running_backward:
                 self.left_pwm_backward.ChangeDutyCycle(abs(left_vel_setpoint)*100)
@@ -111,7 +100,6 @@ class Robot:
             else:
                 self.left_pwm_backward.start(abs(left_vel_setpoint)*100)
                 self.left_running_backward = True
-
         elif left_vel_setpoint == 0:
             if self.left_running_backward:
                 self.left_pwm_backward.stop()
@@ -120,13 +108,36 @@ class Robot:
                 self.left_pwm_forward.stop()
                 self.left_running_forward = False
     
-    
-        #if right_vel_setpoint > 0:
-        #    self.right_pwm_forward.ChangeDutyCycle(right_vel_setpoint*100)
-    #
-        #elif right_vel_setpoint <= 0:
-        #    self.right_pwm_backward.ChangeDutyCycle(right_vel_setpoint*100)
-    
+        if right_vel_setpoint > 0:
+            if self.right_running_backward:
+                self.right_pwm_backward.stop()
+                self.right_pwm_forward.start(right_vel_setpoint*100)
+                self.right_running_backward = False
+                self.right_running_forward = True
+            elif self.right_running_forward:
+                self.right_pwm_forward.ChangeDutyCycle(right_vel_setpoint*100)
+            else:
+                self.right_pwm_forward.start(right_vel_setpoint*100)
+                self.right_running_forward = True
+        elif right_vel_setpoint < 0:
+            if self.right_running_backward:
+                self.right_pwm_backward.ChangeDutyCycle(abs(right_vel_setpoint)*100)
+            elif self.right_running_forward:
+                self.right_pwm_forward.stop()
+                self.right_pwm_backward.start(abs(right_vel_setpoint)*100)
+                self.right_running_forward = False
+                self.right_running_backward = True
+            else:
+                self.right_pwm_backward.start(abs(right_vel_setpoint)*100)
+                self.right_running_backward = True
+        elif right_vel_setpoint == 0:
+            if self.right_running_backward:
+                self.right_pwm_backward.stop()
+                self.right_running_backward = False
+            elif self.right_running_forward:
+                self.right_pwm_forward.stop()
+                self.right_running_forward = False
+
 
     def scale(self, val, scale_from, scale_to):
         """
