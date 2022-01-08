@@ -52,7 +52,7 @@ class Robot:
         angle = 0
         if joystick_y == 0 and joystick_x >= 0:
             angle = math.pi/2
-        elif joystick_x == 0 and joystick_x < 0:
+        elif joystick_y == 0 and joystick_x < 0:
             angle = -math.pi/2
         else:
             angle = math.atan(joystick_x/joystick_y)
