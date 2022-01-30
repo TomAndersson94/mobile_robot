@@ -61,16 +61,16 @@ class Robot:
         rospy.spin()
 
 
-    def pulse_left_hall_a(channel):
+    def pulse_left_hall_a(self, channel):
         print("left hall a")
     
-    def pulse_left_hall_b(channel):
+    def pulse_left_hall_b(self, channel):
         print("left hall b")
     
-    def pulse_right_hall_a(channel):
+    def pulse_right_hall_a(self, channel):
         print("right hall a")
 
-    def pulse_right_hall_b(channel):
+    def pulse_right_hall_b(self, channel):
         print("right hall b")
     
 
