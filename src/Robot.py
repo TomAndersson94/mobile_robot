@@ -1,3 +1,6 @@
+from gc import callbacks
+from tkinter import _XYScrollCommand
+from xxlimited import Xxo
 import rospy
 import math
 import time
@@ -11,6 +14,12 @@ RIGHT_PWM_PIN_FORWARD = 18
 RIGHT_PWM_PIN_BACKWARD = 12
 PWM_FREQUENCY = 100
 
+LEFT_HALL_PIN_A = 17
+LEFT_HALL_PIN_B = 27
+RIGHT_HALL_PIN_A = 23
+RIGHT_HALL_PIN_B = 24
+HALL_RESOLUTION = 990
+WHEEL_RADIUS = 0.04
 
 class Robot:
 
@@ -26,6 +35,8 @@ class Robot:
     def __init__(self):
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
+
+        #PWM
         GPIO.setup(LEFT_PWM_PIN_FORWARD,GPIO.OUT)
         GPIO.setup(LEFT_PWM_PIN_BACKWARD,GPIO.OUT)
         GPIO.setup(RIGHT_PWM_PIN_FORWARD,GPIO.OUT)
@@ -36,13 +47,35 @@ class Robot:
         self.right_pwm_forward = GPIO.PWM(RIGHT_PWM_PIN_FORWARD, PWM_FREQUENCY)
         self.right_pwm_backward = GPIO.PWM(RIGHT_PWM_PIN_BACKWARD, PWM_FREQUENCY)
 
-        #self.left_pwm_forward.start(0)
-        #self.right_pwm_forward.start(0)
+        #Interrupts
+        GPIO.setup(LEFT_HALL_PIN_A, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        GPIO.setup(LEFT_HALL_PIN_B, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        GPIO.setup(RIGHT_HALL_PIN_A, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        GPIO.setup(RIGHT_HALL_PIN_B, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
+        GPIO.add_event_detect(LEFT_HALL_PIN_A, GPIO.RISING, callback=self.pulse_left_hall_a, bouncetime=1)
+        GPIO.add_event_detect(LEFT_HALL_PIN_B, GPIO.RISING, callback=self.pulse_left_hall_b, bouncetime=1)
+        GPIO.add_event_detect(RIGHT_HALL_PIN_A, GPIO.RISING, callback=self.pulse_right_hall_a, bouncetime=1)
+        GPIO.add_event_detect(RIGHT_HALL_PIN_B, GPIO.RISING, callback=self.pulse_right_hall_b, bouncetime=1)
+
+        #ROS
         rospy.init_node("robot_node")
         rospy.Subscriber('/cmd_vel', Twist, self.set_wheel_velocity)
         rospy.spin()
 
+
+    def pulse_left_hall_a(channel):
+        print("left hall a")
+    
+    def pulse_left_hall_b(channel):
+        print("left hall b")
+    
+    def pulse_right_hall_a(channel):
+        print("right hall a")
+
+    def pulse_right_hall_b(channel):
+        print("right hall b")
+    
 
     def set_wheel_velocity(self, cmd_vel):
         joystick_x = cmd_vel.linear.x
