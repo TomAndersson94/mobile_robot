@@ -1,6 +1,3 @@
-from gc import callbacks
-from tkinter import _XYScrollCommand
-from xxlimited import Xxo
 import rospy
 import math
 import time
