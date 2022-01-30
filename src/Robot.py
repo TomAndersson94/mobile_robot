@@ -63,13 +63,25 @@ class Robot:
 
     def hall_pulse_callback(self, channel):
         if channel == LEFT_HALL_PIN_A:
-            print("left hall a")
+            if not GPIO.input(LEFT_HALL_PIN_B):
+                print("left hall a, forwward")
+            else:
+                print("left hall a, backward")
         elif channel == LEFT_HALL_PIN_B:
-            print("left hall b")
+            if not GPIO.input(LEFT_HALL_PIN_A):
+                print("left hall b, backward")
+            else:
+                print("left hall b, forward")
         elif channel == RIGHT_HALL_PIN_A:
-            print("right hall a")
+            if not GPIO.input(RIGHT_HALL_PIN_B):
+                print("right hall a, backward")
+            else: 
+                print("right hall a, forward")
         elif channel == RIGHT_HALL_PIN_B:
-            print("right hall b")
+            if not GPIO.input(RIGHT_HALL_PIN_A):
+                print("right hall b, forward")
+            else:
+                print("right hall b, backward")
     
 
     def set_wheel_velocity(self, cmd_vel):
