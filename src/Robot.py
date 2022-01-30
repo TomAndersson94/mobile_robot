@@ -50,10 +50,10 @@ class Robot:
         GPIO.setup(RIGHT_HALL_PIN_A, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         GPIO.setup(RIGHT_HALL_PIN_B, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-        GPIO.add_event_detect(LEFT_HALL_PIN_A, GPIO.RISING, callback=self.pulse_left_hall_a, bouncetime=1)
-        GPIO.add_event_detect(LEFT_HALL_PIN_B, GPIO.RISING, callback=self.pulse_left_hall_b, bouncetime=1)
-        GPIO.add_event_detect(RIGHT_HALL_PIN_A, GPIO.RISING, callback=self.pulse_right_hall_a, bouncetime=1)
-        GPIO.add_event_detect(RIGHT_HALL_PIN_B, GPIO.RISING, callback=self.pulse_right_hall_b, bouncetime=1)
+        GPIO.add_event_detect(LEFT_HALL_PIN_A, GPIO.RISING, callback=self.hall_pulse_callback bouncetime=1)
+        GPIO.add_event_detect(LEFT_HALL_PIN_B, GPIO.RISING, callback=self.hall_pulse_callback, bouncetime=1)
+        GPIO.add_event_detect(RIGHT_HALL_PIN_A, GPIO.RISING, callback=self.hall_pulse_callback, bouncetime=1)
+        GPIO.add_event_detect(RIGHT_HALL_PIN_B, GPIO.RISING, callback=self.hall_pulse_callback, bouncetime=1)
 
         #ROS
         rospy.init_node("robot_node")
@@ -61,17 +61,15 @@ class Robot:
         rospy.spin()
 
 
-    def pulse_left_hall_a(self, channel):
-        print("left hall a")
-    
-    def pulse_left_hall_b(self, channel):
-        print("left hall b")
-    
-    def pulse_right_hall_a(self, channel):
-        print("right hall a")
-
-    def pulse_right_hall_b(self, channel):
-        print("right hall b")
+    def hall_pulse_callback(self, channel):
+        if channel == LEFT_HALL_PIN_A:
+            print("left hall a")
+        elif channel == LEFT_HALL_PIN_B:
+            print("left hall b")
+        elif channel == RIGHT_HALL_PIN_A:
+            print("right hall a")
+        elif channel == RIGHT_HALL_PIN_B:
+            print("right hall b")
     
 
     def set_wheel_velocity(self, cmd_vel):
