@@ -1,6 +1,7 @@
 import rospy
 import math
 import time
+from std_msgs.msg import Float64
 from geometry_msgs.msg import Twist
 import RPi.GPIO as GPIO
 
@@ -29,9 +30,11 @@ class Robot:
     right_pwm_forward = None
     right_pwm_backward = None
 
-    #temp
-    nbr_left_ticks = 0
-    nbr_right_ticks = 0
+    last_left_hall_pulse_time = 0
+    last_right_hall_pulse_time = 0
+    left_vel = 0
+    right_vel = 0
+
 
     def __init__(self):
         GPIO.setmode(GPIO.BCM)
@@ -55,45 +58,38 @@ class Robot:
         GPIO.setup(RIGHT_HALL_PIN_B, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
         GPIO.add_event_detect(LEFT_HALL_PIN_A, GPIO.RISING, callback=self.hall_pulse_callback, bouncetime=1)
-        GPIO.add_event_detect(LEFT_HALL_PIN_B, GPIO.RISING, callback=self.hall_pulse_callback, bouncetime=1)
         GPIO.add_event_detect(RIGHT_HALL_PIN_A, GPIO.RISING, callback=self.hall_pulse_callback, bouncetime=1)
-        GPIO.add_event_detect(RIGHT_HALL_PIN_B, GPIO.RISING, callback=self.hall_pulse_callback, bouncetime=1)
 
         #ROS
         rospy.init_node("robot_node")
         rospy.Subscriber('/cmd_vel', Twist, self.set_wheel_velocity)
-        rospy.spin()
+        pub_left_vel = rospy.Publisher('/left_wheel_vel', Float64, queue_size=2)
+        pub_right_vel = rospy.Publisher('/right_wheel_vel', Float64, queue_size=2)
+        rate = rospy.Rate(10)
+
+        while not rospy.is_shutdown():
+            pub_left_vel.publish(self.left_vel)
+            pub_right_vel.publish(self.right_vel)
+            rate.sleep()
 
 
     def hall_pulse_callback(self, channel):
+        time_now = time.time_ns()
         if channel == LEFT_HALL_PIN_A:
-            if not GPIO.input(LEFT_HALL_PIN_B):
-                self.nbr_left_ticks+=1
-                print("left hall a, forward " , self.nbr_left_ticks)
-            else:
-                self.nbr_left_ticks-=1
-                print("left hall a, backward " , self.nbr_left_ticks)
-        elif channel == LEFT_HALL_PIN_B:
-            if not GPIO.input(LEFT_HALL_PIN_A):
-                self.nbr_left_ticks-=1
-                print("left hall b, backward " , self.nbr_left_ticks)
-            else:
-                self.nbr_left_ticks+=1
-                print("left hall b, forward " , self.nbr_left_ticks)
+            if self.last_left_hall_pulse_time != 0 and time_now > self.last_left_hall_pulse_time:
+                if not GPIO.input(LEFT_HALL_PIN_B): 
+                    self.left_vel = WHEEL_RADIUS*2*math.pi/HALL_RESOLUTION*(10**9)/(time_now-self.last_left_hall_pulse_time)
+                else:
+                    self.left_vel = -WHEEL_RADIUS*2*math.pi/HALL_RESOLUTION*(10**9)/(time_now-self.last_left_hall_pulse_time)
+            self.last_left_hall_pulse_time = time_now
+
         elif channel == RIGHT_HALL_PIN_A:
-            if not GPIO.input(RIGHT_HALL_PIN_B):
-                self.nbr_right_ticks-=1
-                print("right hall a, backward ", self.nbr_right_ticks)
-            else:
-                self.nbr_right_ticks+=1 
-                print("right hall a, forward ", self.nbr_right_ticks)
-        elif channel == RIGHT_HALL_PIN_B:
-            if not GPIO.input(RIGHT_HALL_PIN_A):
-                self.nbr_right_ticks+=1
-                print("right hall b, forward ", self.nbr_right_ticks)
-            else:
-                self.nbr_right_ticks-=1
-                print("right hall b, backward ", self.nbr_right_ticks)
+            if self.last_right_hall_pulse_time != 0 and time_now > self.last_tight_hall_pulse_time:
+                if not GPIO.input(RIGHT_HALL_PIN_B):
+                    self.tight_vel = -WHEEL_RADIUS*2*math.pi/HALL_RESOLUTION*(10**9)/(time_now-self.last_left_hall_pulse_time)
+                else:
+                    self.tight_vel = WHEEL_RADIUS*2*math.pi/HALL_RESOLUTION*(10**9)/(time_now-self.last_left_hall_pulse_time)
+            self.last_tight_hall_pulse_time = time_now
     
 
     def set_wheel_velocity(self, cmd_vel):
