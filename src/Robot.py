@@ -29,10 +29,14 @@ class Robot:
     right_pwm_forward = None
     right_pwm_backward = None
 
+    #temp
+    nbr_left_ticks = 0
+    nbr_right_ticks = 0
+
     def __init__(self):
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
-
+        
         #PWM
         GPIO.setup(LEFT_PWM_PIN_FORWARD,GPIO.OUT)
         GPIO.setup(LEFT_PWM_PIN_BACKWARD,GPIO.OUT)
@@ -64,24 +68,32 @@ class Robot:
     def hall_pulse_callback(self, channel):
         if channel == LEFT_HALL_PIN_A:
             if not GPIO.input(LEFT_HALL_PIN_B):
-                print("left hall a, forwward")
+                self.nbr_left_ticks+=1
+                print("left hall a, forward " , self.nbr_left_ticks)
             else:
-                print("left hall a, backward")
+                self.nbr_left_ticks-=1
+                print("left hall a, backward " , self.nbr_left_ticks)
         elif channel == LEFT_HALL_PIN_B:
             if not GPIO.input(LEFT_HALL_PIN_A):
-                print("left hall b, backward")
+                self.nbr_left_ticks-=1
+                print("left hall b, backward " , self.nbr_left_ticks)
             else:
-                print("left hall b, forward")
+                self.nbr_left_ticks+=1
+                print("left hall b, forward " , self.nbr_left_ticks)
         elif channel == RIGHT_HALL_PIN_A:
             if not GPIO.input(RIGHT_HALL_PIN_B):
-                print("right hall a, backward")
-            else: 
-                print("right hall a, forward")
+                self.nbr_right_ticks-=1
+                print("right hall a, backward ", self.nbr_right_ticks)
+            else:
+                self.nbr_right_ticks+=1 
+                print("right hall a, forward ", self.nbr_right_ticks)
         elif channel == RIGHT_HALL_PIN_B:
             if not GPIO.input(RIGHT_HALL_PIN_A):
-                print("right hall b, forward")
+                self.nbr_right_ticks+=1
+                print("right hall b, forward ", self.nbr_right_ticks)
             else:
-                print("right hall b, backward")
+                self.nbr_right_ticks-=1
+                print("right hall b, backward ", self.nbr_right_ticks)
     
 
     def set_wheel_velocity(self, cmd_vel):
