@@ -57,8 +57,8 @@ class Robot:
         GPIO.setup(RIGHT_HALL_PIN_A, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         GPIO.setup(RIGHT_HALL_PIN_B, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-        GPIO.add_event_detect(LEFT_HALL_PIN_A, GPIO.RISING, callback=self.hall_pulse_callback, bouncetime=1)
-        GPIO.add_event_detect(RIGHT_HALL_PIN_A, GPIO.RISING, callback=self.hall_pulse_callback, bouncetime=1)
+        GPIO.add_event_detect(LEFT_HALL_PIN_A, GPIO.RISING, callback=self.hall_pulse_callback, bouncetime=3)
+        GPIO.add_event_detect(RIGHT_HALL_PIN_A, GPIO.RISING, callback=self.hall_pulse_callback, bouncetime=3)
 
         #ROS
         rospy.init_node("robot_node")
