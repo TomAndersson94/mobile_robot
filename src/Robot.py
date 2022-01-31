@@ -84,12 +84,12 @@ class Robot:
             self.last_left_hall_pulse_time = time_now
 
         elif channel == RIGHT_HALL_PIN_A:
-            if self.last_right_hall_pulse_time != 0 and time_now > self.last_tight_hall_pulse_time:
+            if self.last_right_hall_pulse_time != 0 and time_now > self.last_right_hall_pulse_time:
                 if not GPIO.input(RIGHT_HALL_PIN_B):
-                    self.tight_vel = -WHEEL_RADIUS*2*math.pi/HALL_RESOLUTION*(10**9)/(time_now-self.last_left_hall_pulse_time)
+                    self.right_vel = -WHEEL_RADIUS*2*math.pi/HALL_RESOLUTION*(10**9)/(time_now-self.last_left_hall_pulse_time)
                 else:
-                    self.tight_vel = WHEEL_RADIUS*2*math.pi/HALL_RESOLUTION*(10**9)/(time_now-self.last_left_hall_pulse_time)
-            self.last_tight_hall_pulse_time = time_now
+                    self.right_vel = WHEEL_RADIUS*2*math.pi/HALL_RESOLUTION*(10**9)/(time_now-self.last_left_hall_pulse_time)
+            self.last_right_hall_pulse_time = time_now
     
 
     def set_wheel_velocity(self, cmd_vel):
