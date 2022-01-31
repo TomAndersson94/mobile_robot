@@ -57,8 +57,8 @@ class Robot:
         GPIO.setup(RIGHT_HALL_PIN_A, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         GPIO.setup(RIGHT_HALL_PIN_B, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-        GPIO.add_event_detect(LEFT_HALL_PIN_A, GPIO.RISING, callback=self.hall_pulse_callback, bouncetime=3)
-        GPIO.add_event_detect(RIGHT_HALL_PIN_A, GPIO.RISING, callback=self.hall_pulse_callback, bouncetime=3)
+        GPIO.add_event_detect(LEFT_HALL_PIN_A, GPIO.RISING, callback=self.hall_pulse_callback, bouncetime=1)
+        GPIO.add_event_detect(RIGHT_HALL_PIN_A, GPIO.RISING, callback=self.hall_pulse_callback, bouncetime=1)
 
         #ROS
         rospy.init_node("robot_node")
@@ -86,9 +86,9 @@ class Robot:
         elif channel == RIGHT_HALL_PIN_A:
             if self.last_right_hall_pulse_time != 0 and time_now > self.last_right_hall_pulse_time:
                 if not GPIO.input(RIGHT_HALL_PIN_B):
-                    self.right_vel = -WHEEL_RADIUS*2*math.pi/HALL_RESOLUTION*(10**9)/(time_now-self.last_left_hall_pulse_time)
+                    self.right_vel = -WHEEL_RADIUS*2*math.pi/HALL_RESOLUTION*(10**9)/(time_now-self.last_right_hall_pulse_time)
                 else:
-                    self.right_vel = WHEEL_RADIUS*2*math.pi/HALL_RESOLUTION*(10**9)/(time_now-self.last_left_hall_pulse_time)
+                    self.right_vel = WHEEL_RADIUS*2*math.pi/HALL_RESOLUTION*(10**9)/(time_now-self.last_right_hall_pulse_time)
             self.last_right_hall_pulse_time = time_now
     
 
