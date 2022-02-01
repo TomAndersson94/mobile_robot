@@ -77,18 +77,24 @@ class Robot:
         time_now = time.time_ns()
         if channel == LEFT_HALL_PIN_A:
             if self.last_left_hall_pulse_time != 0 and time_now > self.last_left_hall_pulse_time:
+                new_vel = 0.0
                 if not GPIO.input(LEFT_HALL_PIN_B): 
-                    self.left_vel = WHEEL_RADIUS*2*math.pi/HALL_RESOLUTION*(10**9)/(time_now-self.last_left_hall_pulse_time)
+                    new_vel = WHEEL_RADIUS*2*math.pi/HALL_RESOLUTION*(10**9)/(time_now-self.last_left_hall_pulse_time)
                 else:
-                    self.left_vel = -WHEEL_RADIUS*2*math.pi/HALL_RESOLUTION*(10**9)/(time_now-self.last_left_hall_pulse_time)
+                    new_vel = -WHEEL_RADIUS*2*math.pi/HALL_RESOLUTION*(10**9)/(time_now-self.last_left_hall_pulse_time)
+                if abs(new_vel-self.left_vel) < 0.2: #filter
+                    self.left_vel = new_vel
             self.last_left_hall_pulse_time = time_now
 
         elif channel == RIGHT_HALL_PIN_A:
             if self.last_right_hall_pulse_time != 0 and time_now > self.last_right_hall_pulse_time:
+                new_vel = 0.0
                 if not GPIO.input(RIGHT_HALL_PIN_B):
-                    self.right_vel = -WHEEL_RADIUS*2*math.pi/HALL_RESOLUTION*(10**9)/(time_now-self.last_right_hall_pulse_time)
+                    new_vel = -WHEEL_RADIUS*2*math.pi/HALL_RESOLUTION*(10**9)/(time_now-self.last_right_hall_pulse_time)
                 else:
-                    self.right_vel = WHEEL_RADIUS*2*math.pi/HALL_RESOLUTION*(10**9)/(time_now-self.last_right_hall_pulse_time)
+                    new_vel = WHEEL_RADIUS*2*math.pi/HALL_RESOLUTION*(10**9)/(time_now-self.last_right_hall_pulse_time)
+                if abs(new_vel-self.right_vel) < 0.2: #filter
+                    self.right_vel = new_vel
             self.last_right_hall_pulse_time = time_now
     
 
