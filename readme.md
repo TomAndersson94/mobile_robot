@@ -1,7 +1,7 @@
 # Mobile robot - readme under construction.
 
 ##
-A homemade mobile robot to experiment with SLAM and path planning.
+A homemade mobile robot to experiment with SLAM and path planning. The project is still in its early stages.
 
 ## Important notes:
 
